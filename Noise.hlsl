@@ -2,6 +2,7 @@
     Reference materials
         https://thebookofshaders.com
     Hash... https://www.shadertoy.com/view/4djSRW
+        exsample hash13 outtype 1(float),intype 3(vec3)
     Use Support function
 
     Random
@@ -10,12 +11,18 @@
         GradientNoise
         PhasorNoise
         SimpleNoise
+        ValueNoise
         Voronoi
             ChebychevVoronoi
             ManhattanVoronoi
             MinkowskiVoronoi
         WaveletNoise
     FBM
+        FBM24 -in2,roop4
+        FBM28 -in2,roop8
+        FBM34 -in3,roop4
+        FBM38 -in3,roop8
+
 */
 
 //Hash
@@ -129,6 +136,10 @@ float random_seed(float2 uv)
     return frac(sin(dot(uv.xy, float2(12.9898, 78.233))) * 43758.5453123);
 }
 
+float random_seed3(float3 p)
+{
+    return frac(sin(dot(p.xyz, float3(12.9898, 78.233,54.641))) * 43758.5453123);
+}
 void Random(float2 uv, float2 scale, out float iOut, out float fOut)
 {
     float2 p = uv * scale;
@@ -535,15 +546,30 @@ void WaveletNoise(float2 p, float angle, float phase, float seed_scale, float sc
     Out = d * .5 + .5;
 }
 //FBM
-float fbm_noise(float2 p)
+float fbm_noise2(float2 p)
 {
     float2 ip = floor(p);
     float2 u = frac(p);
     u = u * u * (3.0 - 2.0 * u);
-    float res = lerp(lerp(random_seed(ip), random_seed(ip + float2(1.0, 0.0)), u.x), lerp(random_seed(ip + float2(0.0, 1.0)), random_seed(ip + float2(1.0, 1.0)), u.x), u.y);
+    float res = lerp(lerp(random_seed(ip), random_seed(ip + float2(1.0, 0.0)), u.x),lerp(random_seed(ip + float2(0.0, 1.0)), random_seed(ip + float2(1.0, 1.0)), u.x), u.y);
     return res * res;
 }
-void FBM(float2 uv, float amplitude, float frequency, out float Out)
+
+void FBM24(float2 uv, float amplitude, float frequency, out float Out)
+{
+    float2 p = (uv * 2.0 - 1.0);
+    float result = 0.;
+    float amplitude2 = amplitude;
+    float frequency2 = frequency;
+    for (int i = 0; i < 4; i++)
+    {
+        result += fbm_noise2(p * frequency2) * amplitude2;
+        amplitude2 *= .5;
+        frequency2 *= 2.;
+    }
+    Out = result;
+}
+void FBM28(float2 uv, float amplitude, float frequency, out float Out)
 {
     float2 p = (uv * 2.0 - 1.0);
     float result = 0.;
@@ -551,9 +577,25 @@ void FBM(float2 uv, float amplitude, float frequency, out float Out)
     float frequency2 = frequency;
     for (int i = 0; i < 8; i++)
     {
-        result += fbm_noise(p * frequency2) * amplitude2;
+        result += fbm_noise2(p * frequency2) * amplitude2;
         amplitude2 *= .5;
         frequency2 *= 2.;
     }
     Out = result;
 }
+
+
+//void FBM38(float3 p, float amplitude, float frequency, out float Out)
+//{
+//    float3 pp = (p * 2.0 - 1.0);
+//    float result = 0.;
+//    float amplitude2 = amplitude;
+//    float frequency2 = frequency;
+//    for (int i = 0; i < 8; i++)
+//    {
+//        result += fbm_noise(p * frequency2) * amplitude2;
+//        amplitude2 *= .5;
+//        frequency2 *= 2.;
+//    }
+//    Out = result;
+//}
