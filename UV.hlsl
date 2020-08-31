@@ -1,3 +1,8 @@
+void Mosaic(float2 UV, float2 Power, out float2 Out)
+{
+    float2 mos = 1.0 / Power;
+    Out = floor(UV / mos) * mos + mos * 0.5;
+}
 void PolarCoordinates(float2 UV, float2 Center, float RadialScale, float LengthScale, out float2 Out)
 {
     float2 delta = UV - Center;
