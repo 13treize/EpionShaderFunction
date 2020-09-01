@@ -6,6 +6,9 @@
     Use Support function
 
     Random
+        Random1
+        Random2
+        Random3
     RandomMaze
     Noise
         GradientNoise
@@ -131,7 +134,11 @@ float2x2 NoiseRot(float a)
 }
 
 //Random
-float random_seed(float2 uv)
+float random_seed1(float val)
+{
+    return frac(sin(val) *  43758.5453123);
+}
+float random_seed2(float2 uv)
 {
     return frac(sin(dot(uv.xy, float2(12.9898, 78.233))) * 43758.5453123);
 }
@@ -143,8 +150,8 @@ float random_seed3(float3 p)
 void Random(float2 uv, float2 scale, out float iOut, out float fOut)
 {
     float2 p = uv * scale;
-    iOut = random_seed(floor(p));
-    fOut = random_seed(frac(p));
+    iOut = random_seed2(floor(p));
+    fOut = random_seed2(frac(p));
 }
 
 //RandomMaze
@@ -551,7 +558,7 @@ float fbm_noise2(float2 p)
     float2 ip = floor(p);
     float2 u = frac(p);
     u = u * u * (3.0 - 2.0 * u);
-    float res = lerp(lerp(random_seed(ip), random_seed(ip + float2(1.0, 0.0)), u.x),lerp(random_seed(ip + float2(0.0, 1.0)), random_seed(ip + float2(1.0, 1.0)), u.x), u.y);
+    float res = lerp(lerp(random_seed2(ip), random_seed2(ip + float2(1.0, 0.0)), u.x),lerp(random_seed2(ip + float2(0.0, 1.0)), random_seed2(ip + float2(1.0, 1.0)), u.x), u.y);
     return res * res;
 }
 

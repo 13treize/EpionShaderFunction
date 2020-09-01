@@ -1,3 +1,12 @@
+/*
+    Use Support function
+    Mosaic
+    PolarCoordinates
+    RadialShear
+    Spherize
+    TilingAndOffset
+    Twirl
+*/
 void Mosaic(float2 UV, float2 Power, out float2 Out)
 {
     float2 mos = 1.0 / Power;
@@ -29,8 +38,6 @@ void TilingAndOffset(float2 UV, float2 Tiling, float2 Offset, out float2 Out)
 {
     Out = UV * Tiling + Offset;
 }
-
-
 void Twirl(float2 UV, float2 Center, float Strength, float2 Offset, out float2 Out)
 {
     float2 delta = UV - Center;
