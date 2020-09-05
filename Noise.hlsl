@@ -6,11 +6,13 @@
     Use Support function
 
     Random
-        Random1
         Random2
         Random3
     RandomMaze
     Noise
+        Noise2
+        Noise3
+
         GradientNoise
         PhasorNoise
         SimpleNoise
@@ -185,6 +187,30 @@ void RandomMaze(float2 uv, float2 scale, out float Line, out float Circle, out f
 }
 
 
+//  Noise2
+float noise2(float2 p)
+{
+    const float K1 = (sqrt(3.) - 1.) / 2.;
+    const float K2 = (3. - sqrt(3.)) / 6.;
+	
+    float2 i = floor(p + (p.x + p.y) * K1);
+	
+    float2 a = p - i + (i.x + i.y) * K2;
+    float2 o = (a.x > a.y) ? float2(1.0, 0.0) : float2(0.0, 1.0);
+    float2 b = a - o + K2;
+    float2 c = a - 1.0 + 2.0 * K2;
+	
+    float3 h = max(0.5 - float3(dot(a, a), dot(b, b), dot(c, c)), 0.0);
+    float2 hashA, hashB, hashC;
+    hash22(i + 0.0, hashA);
+    hash22(i + o, hashB);
+    hash22(i + o, hashC);
+    float3 n = h * h * h * h * float3(dot(a, hashA), dot(b, hashB), dot(c, hashC));
+	
+    return dot(n, float3(70.0));
+}
+
+//  Noise3
 //GradientNoise
 float2 gradientNoise_dir(float2 p)
 {
@@ -284,11 +310,8 @@ void PhasorNoise(float2 uv, float f_, float b_, float o_, out float a, out float
     c = length(phasorNoise);
     d = frac(phi / (2.0 * 3.14) - f_ * dot(uv, dir));
 }
+
 //  SimpleNoise
-inline float noise_randomValue(float2 uv)
-{
-    return frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
-}
 inline float noise_interpolate(float a, float b, float t)
 {
     return (1.0 - t) * a + (t * b);
@@ -303,10 +326,10 @@ inline float valueNoise(float2 uv)
     float2 c1 = i + float2(1.0, 0.0);
     float2 c2 = i + float2(0.0, 1.0);
     float2 c3 = i + float2(1.0, 1.0);
-    float r0 = noise_randomValue(c0);
-    float r1 = noise_randomValue(c1);
-    float r2 = noise_randomValue(c2);
-    float r3 = noise_randomValue(c3);
+    float r0 = random_seed2(c0);
+    float r1 = random_seed2(c1);
+    float r2 = random_seed2(c2);
+    float r3 = random_seed2(c3);
     float bottomOfGrid = noise_interpolate(r0, r1, f.x);
     float topOfGrid = noise_interpolate(r2, r3, f.x);
     float t = noise_interpolate(bottomOfGrid, topOfGrid, f.y);
