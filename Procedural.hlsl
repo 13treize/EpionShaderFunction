@@ -1,3 +1,16 @@
+/*
+    Reference materials
+
+    Use Support function
+
+
+*/
+float bias(float a, float b)
+{
+    return pow(a, log(b) / log(0.5));
+}
+
+
 void Checkerboard(float2 UV, float3 ColorA, float3 ColorB, float2 Frequency, out float3 Out)
 {
     UV = (UV.xy + 0.5) * Frequency;
